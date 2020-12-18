@@ -3,8 +3,8 @@ from fastapi.encoders import jsonable_encoder
 
 from app.server.database import (
     add_event,
-    retrieve_events
-)
+    retrieve_events,
+    event_by_department)
 from app.server.models.events import (
     ErrorResponseModel,
     ResponseModel,
@@ -28,3 +28,12 @@ async def get_events():
     if events:
         return ResponseModel(events, "Events data retrieved successfully")
     return ResponseModel(events, "Empty list returned")
+
+
+# Get events by department name
+@router.get("/events/{name}", response_description="Department sorted events; data retrieved")
+async def get_event_by_department_data(name):
+    event = await event_by_department(name)
+    if event:
+        return ResponseModel(event, "event data retrieved successfully")
+    return ErrorResponseModel("An error occurred.", 404, "Student doesn't exist.")

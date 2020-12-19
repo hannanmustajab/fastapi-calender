@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body
 from fastapi.encoders import jsonable_encoder
 
-from app.server.database import (
+from server.database import (
     add_event,
     retrieve_events,
     update_event,
@@ -13,7 +13,7 @@ from app.server.database import (
     retrieve_notifications,
     add_result,
     retrieve_results)
-from app.server.models.events import (
+from server.models.events import (
     ErrorResponseModel,
     ResponseModel,
     EventSchema,

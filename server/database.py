@@ -1,7 +1,7 @@
 import motor.motor_asyncio
 from bson import ObjectId
 
-MONGO_DETAILS = "mongodb://localhost:27017"
+MONGO_DETAILS = "mongodb+srv://mustajabhannan:L5ybRnM3ZTCAbEMH@cluster0-nzknh.mongodb.net"
 
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
 

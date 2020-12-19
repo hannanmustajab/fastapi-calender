@@ -1,22 +1,23 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field,HttpUrl
+from pydantic import BaseModel, Field,HttpUrl
 
-class HolidaySchema(BaseModel):
+class ResultSchema(BaseModel):
     name: str = Field(...)
-    start_date : datetime = Field(...)
-    end_date : datetime = Field(...)
-    url: Optional[HttpUrl]
+    type: str = Field(...)
+    url: HttpUrl = Field(...)
     timestamp: datetime = Field(default=datetime.now())
+    declared : bool = Field(default=True)
 
     class Config:
         schema_extra = {
             "Example": {
                 "name": "Holiday",
-                "start_date": "Date Start",
-                "end_date": "3.0",
-                "url":"Enter URL if any"
+                "type": "Entrance / General",
+                "timestamp": "Timestamp when the result was uploaded.",
+                "url":"Enter URL if any",
+                # "description":"Enter any information"
             }
         }
 

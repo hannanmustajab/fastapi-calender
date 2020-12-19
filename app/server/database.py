@@ -9,6 +9,7 @@ database = client.calender
 events_collection = database.get_collection("events_collection")
 holidays_collection = database.get_collection("holidays_collection")
 notifications_collection = database.get_collection("notifications_collection")
+results_collection = database.get_collection("results_collection")
 
 
 
@@ -110,3 +111,28 @@ async def retrieve_notifications():
         print(event)
         events.append(holiday_helper(event))
     return events
+
+"""
+Results
+"""
+def result_helper(result) -> dict:
+    return {
+        "id": str(result["_id"]),
+        "name": result["name"],
+        "url": result["url"],
+        "type":result["type"],
+        "declared":result["declared"]
+    }
+# Add a new holiday into to the database
+async def add_result(result_data: dict) -> dict:
+    result = await results_collection.insert_one(result_data)
+    new_result = await results_collection.find_one({"_id": result.inserted_id})
+    return result_helper(new_result)
+
+# Retrieve all holidays present in the database
+async def retrieve_results():
+    results = []
+    async for event in results_collection.find():
+        results.append(result_helper(event))
+    return results
+

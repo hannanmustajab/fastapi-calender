@@ -4,7 +4,8 @@ from fastapi.encoders import jsonable_encoder
 from app.server.database import (
     add_event,
     retrieve_events,
-    event_by_department, add_holiday, retrieve_holidays, add_notification, retrieve_notifications)
+    event_by_department, add_holiday, retrieve_holidays, add_notification, retrieve_notifications, add_result,
+    retrieve_results)
 from app.server.models.events import (
     ErrorResponseModel,
     ResponseModel,
@@ -12,6 +13,7 @@ from app.server.models.events import (
 )
 from server.models.holidays import HolidaySchema
 from server.models.notifications import NotificationSchema
+from server.models.results import ResultSchema
 
 router = APIRouter()
 """
@@ -61,16 +63,36 @@ async def get_holidays():
 """
 Notifications
 """
+# Add new notification
 @router.post("/notifications", response_description="Add a new notification to the holidays list.")
 async def add_notification_data(event: NotificationSchema = Body(...)):
     event = jsonable_encoder(event)
     new_event = await add_notification(event)
     return ResponseModel(new_event, "Notification Added Succesfully.")
 
-# Get all events
+# Get all notifications
 @router.get("/notifications", response_description="Retreive All Notifications")
 async def get_notification():
     events = await retrieve_notifications()
     if events:
         return ResponseModel(events, "Notification data retrieved successfully")
     return ResponseModel(events, "Empty list returned")
+
+
+"""
+Results
+"""
+# Add new result
+@router.post("/results", response_description="Add a new result to the result database.")
+async def add_result_data(result: ResultSchema = Body(...)):
+    result = jsonable_encoder(result)
+    new_result = await add_result(result)
+    return ResponseModel(new_result, "Result Added Succesfully.")
+
+# Get all notifications
+@router.get("/results", response_description="Retreive All Results")
+async def get_result():
+    results = await retrieve_results()
+    if results:
+        return ResponseModel(results, "Results data retrieved successfully")
+    return ResponseModel(results, "Empty list returned")

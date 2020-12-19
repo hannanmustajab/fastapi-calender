@@ -12,6 +12,7 @@ class EventSchema(BaseModel):
     end_date : datetime = Field(...)
     url: Optional[HttpUrl]
     online: bool = Field(...)
+    timestamp: datetime = Field(default=datetime.now())
 
 
     class Config:

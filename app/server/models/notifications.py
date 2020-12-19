@@ -8,6 +8,8 @@ class NotificationSchema(BaseModel):
     start_date : datetime = Field(...)
     end_date : datetime = Field(...)
     url: Optional[HttpUrl]
+    timestamp: datetime = Field(default=datetime.now())
+    # description : Optional[str]
 
     class Config:
         schema_extra = {
@@ -15,7 +17,8 @@ class NotificationSchema(BaseModel):
                 "name": "Holiday",
                 "start_date": "Date Start",
                 "end_date": "3.0",
-                "url":"Enter URL if any"
+                "url":"Enter URL if any",
+                # "description":"Enter any information"
             }
         }
 

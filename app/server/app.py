@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.server.routes.routes import router as CalenderRouter
+from server.routes.routes import router as CalenderRouter
 
 app = FastAPI()
 

@@ -9,6 +9,8 @@ database = client.calender
 events_collection = database.get_collection("events_collection")
 holidays_collection = database.get_collection("holidays_collection")
 notifications_collection = database.get_collection("notifications_collection")
+exams_collection = database.get_collection("exams_collection")
+entrances_collection = database.get_collection("entrances_collection")
 results_collection = database.get_collection("results_collection")
 
 
@@ -111,6 +113,72 @@ async def retrieve_notifications():
         print(event)
         events.append(holiday_helper(event))
     return events
+
+"""
+Exam related functions
+"""
+# Helper Function 
+def exam_helper(exam) -> dict:
+    return {
+        "id": str(exam["_id"]),
+        "name": exam["name"],
+        "faculty": exam["faculty"],
+        "department": exam["department"],
+        "course": exam["course"],
+        "date": exam["date"],
+        "course_code": exam["course_code"]
+    }
+
+# Retrieve all exams present in the database
+async def retrieve_exams():
+    exams = []
+    async for exam in exams_collection.find():
+        exams.append(exam_helper(exam))
+    return exams
+
+
+# Retrieve department wise exams from the database
+async def exam_by_department(department: str) -> list:
+    exams = []
+    async for exam in exams_collection.find({"department": {"$regex": department, '$options': 'i'}}):
+        exams.append(exam_helper(exam))
+    return exams
+
+
+# Add a new exam into to the database
+async def add_exam(exam_data: dict) -> dict:
+    exam = await exams_collection.insert_one(exam_data)
+    new_exam = await exams_collection.find_one({"_id": exam.inserted_id})
+    return exam_helper(new_exam)
+
+
+"""
+Entrances related functions
+"""
+# Helper function
+def entrance_helper(entrance)->dict:
+    return {
+        "id": str(entrance["_id"]),
+        "name": entrance["name"],
+        "course": entrance["course"],
+        "date": entrance["date"],
+        "url": entrance["url"]
+    }
+
+# Add a new entrance into to the database
+async def add_entrance(entrance_data: dict) -> dict:
+    entrance = await entrances_collection.insert_one(entrance_data)
+    new_entrance = await entrances_collection.find_one({"_id": entrance.inserted_id})
+    return entrance_helper(new_entrance)
+
+# Retrieve all entrances present in the database
+async def retrieve_entrances():
+    entrances = []
+    async for entrance in entrances_collection.find():
+        entrances.append(entrances_helper(entrance))
+    return entrances
+
+
 
 """
 Results

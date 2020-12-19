@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Body
 from fastapi.encoders import jsonable_encoder
 
-from app.server.database import (
+from server.database import (
     add_event,
     retrieve_events,
-    event_by_department, add_holiday, retrieve_holidays, add_notification, retrieve_notifications, add_result,
-    retrieve_results)
-from app.server.models.events import (
+    event_by_department, add_holiday, retrieve_holidays, add_notification, retrieve_notifications,
+    add_exam, retrieve_exams, exam_by_department, add_entrance, retrieve_entrances, add_result, retrieve_results)
+
+from server.models.events import (
     ErrorResponseModel,
     ResponseModel,
     EventSchema
@@ -14,8 +15,11 @@ from app.server.models.events import (
 from server.models.holidays import HolidaySchema
 from server.models.notifications import NotificationSchema
 from server.models.results import ResultSchema
+from server.models.exams import ExamSchema
+from server.models.entrances import EntranceSchema
 
 router = APIRouter()
+
 """
 Events
 """
@@ -41,7 +45,7 @@ async def get_event_by_department_data(name):
     event = await event_by_department(name)
     if event:
         return ResponseModel(event, "event data retrieved successfully")
-    return ErrorResponseModel("An error occurred.", 404, "Student doesn't exist.")
+    return ErrorResponseModel("An error occurred.", 404, "Event doesn't exist.")
 
 """
 Holidays
@@ -77,6 +81,52 @@ async def get_notification():
     if events:
         return ResponseModel(events, "Notification data retrieved successfully")
     return ResponseModel(events, "Empty list returned")
+
+
+"""
+EXAM
+"""
+# Add new exam
+@router.post("/exams", response_description="Add a new exam to the exams list.")
+async def add_exam_data(exam: ExamSchema = Body(...)):
+    exam = jsonable_encoder(exam)
+    new_exam = await add_exam(exam)
+    return ResponseModel(new_exam, "Exam Added Succesfully.")
+
+# Get all exams
+@router.get("/exams", response_description="Retreive All Exams")
+async def get_exams():
+    exams = await retrieve_exams()
+    if exams:
+        return ResponseModel(exams, "Exam data retrieved successfully")
+    return ResponseModel(exams, "Empty list returned")
+
+# Get exams by department name
+@router.get("/exams/{name}", response_description="Department sorted exams; data retrieved")
+async def get_exam_by_department_data(name):
+    exam = await exam_by_department(name)
+    if exam:
+        return ResponseModel(exam, "exam data retrieved successfully")
+    return ErrorResponseModel("An error occurred.", 404, "Exam doesn't exist.")
+
+
+"""
+ENTRANCE
+"""
+# Add new entrance
+@router.post("/entrances", response_description="Add a new entrance to the entrances list.")
+async def add_entrance_data(entrance: EntranceSchema = Body(...)):
+    entrance = jsonable_encoder(entrance)
+    new_entrance = await add_entrance(entrance)
+    return ResponseModel(new_entrance, "Entrance Added Succesfully.")
+
+# Get all entrances
+@router.get("/entrances", response_description="Retreive All Entrances")
+async def get_entrances():
+    entrances = await retrieve_entrances()
+    if entrances:
+        return ResponseModel(entrances, "Entrances data retrieved successfully")
+    return ResponseModel(entrances, "Empty list returned")
 
 
 """

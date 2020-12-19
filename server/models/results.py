@@ -9,6 +9,8 @@ class ResultSchema(BaseModel):
     url: HttpUrl = Field(...)
     timestamp: datetime = Field(default=datetime.now())
     declared : bool = Field(default=True)
+    department : Optional[str]
+    faculty : Optional[str]
 
     class Config:
         schema_extra = {

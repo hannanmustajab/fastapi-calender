@@ -7,7 +7,15 @@ client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
 database = client.calender
 
 events_collection = database.get_collection("events_collection")
+holidays_collection = database.get_collection("holidays_collection")
+notifications_collection = database.get_collection("notifications_collection")
 
+
+
+
+"""
+Events related functions
+"""
 
 # helpers
 
@@ -20,10 +28,8 @@ def event_helper(event) -> dict:
         "start_date": event["start_date"],
         "end_date": event["end_date"],
         "url": event["url"],
-        # "online":event["online"],
-        # "tags":event["tags"],
-        # "faculty":event["faculty"]
-
+        "online":event["online"],
+        "faculty":event["faculty"]
     }
 
 def faculty_department_help(event)->dict:
@@ -39,8 +45,7 @@ def faculty_department_help(event)->dict:
     """
     return True
 
-
-# Retrieve all students present in the database
+# Retrieve all events present in the database
 async def retrieve_events():
     events = []
     async for event in events_collection.find():
@@ -61,3 +66,47 @@ async def add_event(event_data: dict) -> dict:
     event = await events_collection.insert_one(event_data)
     new_event = await events_collection.find_one({"_id": event.inserted_id})
     return event_helper(new_event)
+
+
+"""
+Holidays related functions
+"""
+# Helper function
+def holiday_helper(event)->dict:
+    return {
+        "id": str(event["_id"]),
+        "name": event["name"],
+        "start_date": event["start_date"],
+        "end_date": event["end_date"],
+        "url": event["url"]
+    }
+
+# Add a new holiday into to the database
+async def add_holiday(holiday_data: dict) -> dict:
+    holiday = await holidays_collection.insert_one(holiday_data)
+    new_holiday = await holidays_collection.find_one({"_id": holiday.inserted_id})
+    return holiday_helper(new_holiday)
+
+# Retrieve all holidays present in the database
+async def retrieve_holidays():
+    events = []
+    async for event in holidays_collection.find():
+        events.append(holiday_helper(event))
+    return events
+
+"""
+Notifications
+"""
+# Add a new holiday into to the database
+async def add_notification(notification_data: dict) -> dict:
+    notification = await notifications_collection.insert_one(notification_data)
+    new_notification = await notifications_collection.find_one({"_id": notification.inserted_id})
+    return holiday_helper(new_notification)
+
+# Retrieve all holidays present in the database
+async def retrieve_notifications():
+    events = []
+    async for event in notifications_collection.find():
+        print(event)
+        events.append(holiday_helper(event))
+    return events

@@ -1,29 +1,21 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field,HttpUrl
+from pydantic import BaseModel, Field,HttpUrl
 
-class EventSchema(BaseModel):
+class NotificationSchema(BaseModel):
     name: str = Field(...)
-    faculty: str = Field(...)
-    department: str = Field(...)
-    description: str = Field(...,max_length=300)
     start_date : datetime = Field(...)
     end_date : datetime = Field(...)
     url: Optional[HttpUrl]
-    online: bool = Field(...)
-
 
     class Config:
         schema_extra = {
             "Example": {
-                "name": "Example Event",
-                "department": "Computer Science",
-                "description": "Dsknkjskm  hjdsbhjsbh",
+                "name": "Holiday",
                 "start_date": "Date Start",
                 "end_date": "3.0",
-                "url":"Enter URL if any",
-                "online":False          #Default
+                "url":"Enter URL if any"
             }
         }
 

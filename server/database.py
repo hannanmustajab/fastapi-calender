@@ -1,6 +1,7 @@
 import motor.motor_asyncio
+from bson import ObjectId
 
-MONGO_DETAILS = "mongodb://localhost:27017"
+MONGO_DETAILS = "mongodb+srv://mustajabhannan:L5ybRnM3ZTCAbEMH@cluster0-nzknh.mongodb.net"
 
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
 
@@ -13,12 +14,10 @@ exams_collection = database.get_collection("exams_collection")
 entrances_collection = database.get_collection("entrances_collection")
 results_collection = database.get_collection("results_collection")
 
-
-
-
 """
 Events related functions
 """
+
 
 # helpers
 
@@ -31,11 +30,12 @@ def event_helper(event) -> dict:
         "start_date": event["start_date"],
         "end_date": event["end_date"],
         "url": event["url"],
-        "online":event["online"],
-        "faculty":event["faculty"]
+        "online": event["online"],
+        "faculty": event["faculty"]
     }
 
-def faculty_department_help(event)->dict:
+
+def faculty_department_help(event) -> dict:
     # TODO
     """
     Add an event here which returns data in the following format:
@@ -47,6 +47,7 @@ def faculty_department_help(event)->dict:
     :return:
     """
     return True
+
 
 # Retrieve all events present in the database
 async def retrieve_events():
@@ -70,12 +71,36 @@ async def add_event(event_data: dict) -> dict:
     new_event = await events_collection.find_one({"_id": event.inserted_id})
     return event_helper(new_event)
 
+# Update a student with a matching ID
+async def update_event(id: str, data: dict):
+    # Return false if an empty request body is sent.
+    if len(data) < 1:
+        return False
+    event = await events_collection.find_one({"_id": ObjectId(id)})
+    if event:
+        updated_event = await events_collection.update_one(
+            {"_id": ObjectId(id)}, {"$set": data}
+        )
+        if updated_event:
+            return True
+        return False
+
+
+# Delete a student from the database
+async def delete_event(id: str):
+    event = await events_collection.find_one({"_id": ObjectId(id)})
+    if event:
+        await events_collection.delete_one({"_id": ObjectId(id)})
+        return True
+
 
 """
 Holidays related functions
 """
+
+
 # Helper function
-def holiday_helper(event)->dict:
+def holiday_helper(event) -> dict:
     return {
         "id": str(event["_id"]),
         "name": event["name"],
@@ -84,11 +109,13 @@ def holiday_helper(event)->dict:
         "url": event["url"]
     }
 
+
 # Add a new holiday into to the database
 async def add_holiday(holiday_data: dict) -> dict:
     holiday = await holidays_collection.insert_one(holiday_data)
     new_holiday = await holidays_collection.find_one({"_id": holiday.inserted_id})
     return holiday_helper(new_holiday)
+
 
 # Retrieve all holidays present in the database
 async def retrieve_holidays():
@@ -97,14 +124,40 @@ async def retrieve_holidays():
         events.append(holiday_helper(event))
     return events
 
+# Update holiday
+async def update_holiday(id: str, data: dict):
+    # Return false if an empty request body is sent.
+    if len(data) < 1:
+        return False
+    holiday = await holidays_collection.find_one({"_id": ObjectId(id)})
+    if holiday:
+        updated_holiday = await holidays_collection.update_one(
+            {"_id": ObjectId(id)}, {"$set": data}
+        )
+        if updated_holiday:
+            return True
+        return False
+
+
+# Delete holiday
+async def delete_holiday(id: str):
+    holiday = await holidays_collection.find_one({"_id": ObjectId(id)})
+    if holiday:
+        await holidays_collection.delete_one({"_id": ObjectId(id)})
+        return True
+
+
 """
 Notifications
 """
+
+
 # Add a new holiday into to the database
 async def add_notification(notification_data: dict) -> dict:
     notification = await notifications_collection.insert_one(notification_data)
     new_notification = await notifications_collection.find_one({"_id": notification.inserted_id})
     return holiday_helper(new_notification)
+
 
 # Retrieve all holidays present in the database
 async def retrieve_notifications():
@@ -113,6 +166,30 @@ async def retrieve_notifications():
         print(event)
         events.append(holiday_helper(event))
     return events
+
+#Update notification
+async def update_notification(id: str, data: dict):
+    # Return false if an empty request body is sent.
+    if len(data) < 1:
+        return False
+    notification = await notifications_collection.find_one({"_id": ObjectId(id)})
+    if notification:
+        updated_notification = await notifications_collection.update_one(
+            {"_id": ObjectId(id)}, {"$set": data}
+        )
+        if updated_notification:
+            return True
+        return False
+
+
+# Delete notification
+async def delete_notification(id: str):
+    notification = await notifications_collection.find_one({"_id": ObjectId(id)})
+    if notification:
+        await notifications_collection.delete_one({"_id": ObjectId(id)})
+        return True
+
+
 
 """
 Exam related functions
@@ -152,6 +229,33 @@ async def add_exam(exam_data: dict) -> dict:
     return exam_helper(new_exam)
 
 
+# Update exam in exam_list
+async def update_exam(id: str, data: dict):
+    # Return false if an empty request body is sent.
+    if len(data) < 1:
+        return False
+    exam = await exams_collection.find_one({"_id": ObjectId(id)})
+    if exam:
+        updated_exam = await exams_collection.update_one(
+            {"_id": ObjectId(id)}, {"$set": data}
+        )
+        if updated_exam:
+            return True
+        return False
+
+
+# Delete exam from the database
+async def delete_exam(id: str):
+    exam = await exams_collection.find_one({"_id": ObjectId(id)})
+    if exam:
+        await exams_collection.delete_one({"_id": ObjectId(id)})
+        return True
+
+
+
+
+
+
 """
 Entrances related functions
 """
@@ -179,28 +283,77 @@ async def retrieve_entrances():
     return entrances
 
 
+# Update entrance in entrance_list
+async def update_entrance(id: str, data: dict):
+    # Return false if an empty request body is sent.
+    if len(data) < 1:
+        return False
+    entrance = await entrances_collection.find_one({"_id": ObjectId(id)})
+    if entrance:
+        updated_entrance = await entrances_collection.update_one(
+            {"_id": ObjectId(id)}, {"$set": data}
+        )
+        if updated_entrance:
+            return True
+        return False
+
+
+# Delete entrance from the database
+async def delete_entrance(id: str):
+    entrance = await entrances_collection.find_one({"_id": ObjectId(id)})
+    if entrance:
+        await entrances_collection.delete_one({"_id": ObjectId(id)})
+        return True
+
 
 """
 Results
 """
+
+
 def result_helper(result) -> dict:
     return {
         "id": str(result["_id"]),
         "name": result["name"],
         "url": result["url"],
-        "type":result["type"],
-        "declared":result["declared"]
+        "type": result["type"],
+        "declared": result["declared"],
+        "department": result["department"],
+        "faculty": result["faculty"]
     }
+
+
 # Add a new holiday into to the database
 async def add_result(result_data: dict) -> dict:
     result = await results_collection.insert_one(result_data)
     new_result = await results_collection.find_one({"_id": result.inserted_id})
     return result_helper(new_result)
 
+
 # Retrieve all holidays present in the database
-async def retrieve_results():
+async def retrieve_results(type):
     results = []
-    async for event in results_collection.find():
+    async for event in results_collection.find({'type':type}):
         results.append(result_helper(event))
     return results
 
+# Update result in result_list
+async def update_result(id: str, data: dict):
+    # Return false if an empty request body is sent.
+    if len(data) < 1:
+        return False
+    result = await results_collection.find_one({"_id": ObjectId(id)})
+    if result:
+        updated_result = await results_collection.update_one(
+            {"_id": ObjectId(id)}, {"$set": data}
+        )
+        if updated_result:
+            return True
+        return False
+
+# Delete result from the database
+async def delete_result(id: str):
+    result = await results_collection.find_one({"_id": ObjectId(id)})
+    if result:
+        await results_collection.delete_one({"_id": ObjectId(id)})
+        return True

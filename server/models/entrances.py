@@ -19,6 +19,22 @@ class EntranceSchema(BaseModel):
             }
         }
 
+class UpdateEntranceSchema(BaseModel):
+    name: str = Field(...)
+    course: str = Field(...)
+    date : datetime = Field(...)
+    url: Optional[HttpUrl]
+
+    class Config:
+        schema_extra = {
+            "Example": {
+                "name": "Entrance Name",
+                "course": "Btech",
+                "date": "Entrance Date",
+                "url":"Enter URL if any"
+            }
+        }
+
 def ResponseModel(data, message):
     return {
         "data": [data],

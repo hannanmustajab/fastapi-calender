@@ -16,7 +16,31 @@ class ExamSchema(BaseModel):
         schema_extra = {
             "Example": {
                 "name": "Exam",
-                "faculty": "RK Goyal",
+                "faculty": "Science",
+                "department": "Computer Science",
+                "course": "BCA",
+                "date": "Exam Date",
+                "course_code": "mmb252"
+                
+            }
+        }
+
+class UpdateExamSchema(BaseModel):
+    name: str = Field(...)
+    department: str = Field(...)
+    faculty: str = Field(...)
+    course: str = Field(...)
+    date : datetime = Field(...)
+    course_code : str = Field(...)
+
+    
+
+
+    class Config:
+        schema_extra = {
+            "Example": {
+                "name": "Exam",
+                "faculty": "Science",
                 "department": "Computer Science",
                 "course": "BCA",
                 "date": "Exam Date",

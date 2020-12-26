@@ -57,6 +57,13 @@ async def retrieve_events():
     return events
 
 
+async def retrieve_event(id: str):
+    event = await events_collection.find_one({"_id": ObjectId(id)})
+    if event:
+        return event_helper(event)
+
+
+
 # Retrieve a student with a matching ID
 async def event_by_department(department: str) -> list:
     events = []
@@ -116,6 +123,11 @@ async def add_holiday(holiday_data: dict) -> dict:
     new_holiday = await holidays_collection.find_one({"_id": holiday.inserted_id})
     return holiday_helper(new_holiday)
 
+# Get single holiday
+async def retrieve_holiday(id: str):
+    event = await holidays_collection.find_one({"_id": ObjectId(id)})
+    if event:
+        return holiday_helper(event)
 
 # Retrieve all holidays present in the database
 async def retrieve_holidays():
@@ -150,6 +162,12 @@ async def delete_holiday(id: str):
 """
 Notifications
 """
+
+# Get single holiday
+async def retrieve_notification(id: str):
+    event = await notifications_collection.find_one({"_id": ObjectId(id)})
+    if event:
+        return holiday_helper(event)
 
 
 # Add a new holiday into to the database
@@ -279,7 +297,7 @@ async def add_entrance(entrance_data: dict) -> dict:
 async def retrieve_entrances():
     entrances = []
     async for entrance in entrances_collection.find():
-        entrances.append(entrances_helper(entrance))
+        entrances.append(entrance_helper(entrance))
     return entrances
 
 
@@ -297,6 +315,11 @@ async def update_entrance(id: str, data: dict):
             return True
         return False
 
+# Get single entrance
+async def retrieve_entrance(id: str):
+    event = await entrances_collection.find_one({"_id": ObjectId(id)})
+    if event:
+        return entrance_helper(event)
 
 # Delete entrance from the database
 async def delete_entrance(id: str):

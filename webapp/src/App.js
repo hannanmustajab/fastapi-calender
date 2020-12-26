@@ -14,8 +14,10 @@ import NotificationsList from "./components/NotificationsList";
 import NotificationsCreate from "./components/NotificationsCreate";
 import NotificationsEdit from "./components/NotificationsEdit";
 import ExamsList from "./components/ExamsList";
+import ExamsCreate from "./components/ExamsCreate";
+import ExamsEdit from "./components/ExamsEdit";
 
-const dataProvider = simpleRestProvider('http://controllerexams.herokuapp.com/api/v1/calender');
+const dataProvider = restProvider('http://controllerexams.herokuapp.com/api/v1/calender');
 
 
 function App() {
@@ -25,7 +27,7 @@ function App() {
            <Resource name='holidays' list={HolidayList} create = {HolidayCreate} edit={HolidayEdit} />
            <Resource name='entrances' list={EntranceList}  create={EntranceCreate} edit={EntranceEdit}/>
            <Resource name='notifications' list={NotificationsList} create={NotificationsCreate} edit={NotificationsEdit}/>
-           <Resource name='exams' list={ExamsList}/>
+           <Resource name='exams' list={ExamsList} create={ExamsCreate} edit={ExamsEdit}/>
            <Resource name='results/entrance'/>
            <Resource name='results/general'/>
       </Admin>

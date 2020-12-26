@@ -27,7 +27,7 @@ from server.database import (
     add_result,
     retrieve_results,
     update_result,
-    delete_result, retrieve_event, retrieve_holiday, retrieve_entrance, retrieve_notification)
+    delete_result, retrieve_event, retrieve_holiday, retrieve_entrance, retrieve_notification, retrieve_exam)
 
 from server.models.events import (
     ErrorResponseModel,
@@ -274,6 +274,13 @@ async def get_exams(response:Response):
         return ResponseModel(exams, "Exam data retrieved successfully")
     return ResponseModel(exams, "Empty list returned")
 
+# Get single event
+@router.get("/exams/{id}", response_description="Get single Notification")
+async def get_exams_by_id(id: str,response:Response):
+    event = await retrieve_exam(id)
+    response.headers['Content-Range'] = 'events 0-20/20'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Range'
+    return (event)
 
 # update exam
 @router.put("/exams/{id}")

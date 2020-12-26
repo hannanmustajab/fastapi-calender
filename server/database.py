@@ -239,6 +239,11 @@ async def exam_by_department(department: str) -> list:
         exams.append(exam_helper(exam))
     return exams
 
+# Get single holiday
+async def retrieve_exam(id: str):
+    event = await exams_collection.find_one({"_id": ObjectId(id)})
+    if event:
+        return exam_helper(event)
 
 # Add a new exam into to the database
 async def add_exam(exam_data: dict) -> dict:

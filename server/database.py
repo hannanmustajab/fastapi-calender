@@ -14,6 +14,7 @@ exams_collection = database.get_collection("exams_collection")
 entrances_collection = database.get_collection("entrances_collection")
 results_collection = database.get_collection("results_collection")
 
+
 """
 Events related functions
 """
@@ -357,3 +358,27 @@ async def delete_result(id: str):
     if result:
         await results_collection.delete_one({"_id": ObjectId(id)})
         return True
+
+"""
+Departments
+"""
+
+# Retrieve all departments present in the database
+async def retrieve_departments():
+    departments = await events_collection.distinct("department")
+    return departments
+
+"""
+Faculties
+"""
+# Retrieve all faculties present in the database
+async def retrieve_faculties():
+    faculties = await events_collection.distinct("faculty")
+    return faculties
+
+    
+
+
+
+
+

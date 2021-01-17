@@ -28,7 +28,9 @@ from server.database import (
     add_result,
     retrieve_results,
     update_result,
-    delete_result)
+    delete_result,
+    retrieve_departments,
+    retrieve_faculties)
 
 from server.models.events import (
     ErrorResponseModel,
@@ -407,3 +409,29 @@ async def delete_result_data(id: str):
     return ErrorResponseModel(
         "An error occurred", 404, "Result with id {0} doesn't exist".format(id)
     )
+
+
+"""
+Departments
+"""
+# Get all departments
+@router.get("/departments", response_description="Retreive All Departments")
+async def get_departments():
+    departments = await retrieve_departments()
+    if departments:
+        return ResponseModel(departments, "departments data retrieved successfully")
+    return ResponseModel(departments, "Empty list returned")
+
+
+
+"""
+Faculties
+"""
+# Get all faculties
+@router.get("/faculties", response_description="Retreive All Faculties")
+async def get_faculties():
+    faculties = await retrieve_faculties()
+    if faculties:
+        return ResponseModel(faculties, "faculties data retrieved successfully")
+    return ResponseModel(faculties, "Empty list returned")
+

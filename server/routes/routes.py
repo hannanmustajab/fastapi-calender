@@ -1,10 +1,9 @@
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body,Header,Response
 from fastapi.encoders import jsonable_encoder
 
 from server.database import (
     add_event,
     retrieve_events,
-
     update_event,
     delete_event,
     event_by_department,
@@ -28,9 +27,10 @@ from server.database import (
     add_result,
     retrieve_results,
     update_result,
-    delete_result,
-    retrieve_departments,
+
+    delete_result, retrieve_event, retrieve_holiday, retrieve_entrance, retrieve_notification, retrieve_exam, retrieve_departments,
     retrieve_faculties)
+>>>>>>> 5cb9ec66f82383635741cbd1b8a9060f1375a9a5
 
 from server.models.events import (
     ErrorResponseModel,
@@ -39,29 +39,24 @@ from server.models.events import (
     UpdateEventSchema)
 from server.models.holidays import (
     ErrorResponseModel,
-    ResponseModel,
     HolidaySchema,
     UpdateHolidaySchema)
 
 from server.models.notifications import (
     ErrorResponseModel,
-    ResponseModel,
     NotificationSchema,
     UpdateNotificationSchema)
 from server.models.results import (
     ErrorResponseModel,
-    ResponseModel,
     ResultSchema,
     UpdateResultSchema)
 from server.models.exams import (
     ErrorResponseModel,
-    ResponseModel,
     ExamSchema,
     UpdateExamSchema)
 
 from server.models.entrances import (
     ErrorResponseModel,
-    ResponseModel,
     EntranceSchema,
     UpdateEntranceSchema)
    
@@ -82,15 +77,25 @@ async def add_event_data(event: EventSchema = Body(...)):
 
 # Get all events
 @router.get("/events", response_description="Retreive All Events")
-async def get_events():
+async def get_events(response:Response):
     events = await retrieve_events()
+    response.headers['Content-Range'] = 'events 0-20/20'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Range'
     if events:
         return ResponseModel(events, "Events data retrieved successfully")
     return ResponseModel(events, "Empty list returned")
 
 
+# Get single event
+@router.get("/events/{id}", response_description="Get single event")
+async def get_events_by_id(id: str,response:Response):
+    event = await retrieve_event(id)
+    response.headers['Content-Range'] = 'events 0-20/20'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Range'
+    return (event)
+
 # update event
-@router.put("/{id}")
+@router.put("/events/{id}")
 async def update_event_data(id: str, req: UpdateEventSchema = Body(...)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     updated_event = await update_event(id, req)
@@ -107,7 +112,7 @@ async def update_event_data(id: str, req: UpdateEventSchema = Body(...)):
 
 
 # Delete event
-@router.delete("/{id}", response_description="Event data deleted from the database")
+@router.delete("/events/{id}", response_description="Event data deleted from the database")
 async def delete_event_data(id: str):
     deleted_event = await delete_event(id)
     if deleted_event:
@@ -142,11 +147,21 @@ async def add_holiday_data(event: HolidaySchema = Body(...)):
 
 # Get all holidays
 @router.get("/holidays", response_description="Retreive All Holidays")
-async def get_holidays():
+async def get_holidays(response:Response):
     events = await retrieve_holidays()
+    response.headers['Content-Range'] = 'holidays 0-20/20'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Range'
     if events:
         return ResponseModel(events, "Holiday data retrieved successfully")
     return ResponseModel(events, "Empty list returned")
+
+# Get single holiday
+@router.get("/holidays/{id}", response_description="Get SIngle Holiday ")
+async def get_holiday_by_id(id: str,response:Response):
+    event = await retrieve_holiday(id)
+    response.headers['Content-Range'] = 'events 0-20/20'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Range'
+    return (event)
 
 # update holidays
 @router.put("/holidays/{id}")
@@ -154,10 +169,8 @@ async def update_holiday_data(id: str, req: UpdateHolidaySchema = Body(...)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     updated_holiday = await update_holiday(id, req)
     if updated_holiday:
-        return ResponseModel(
-            "Holiday with ID: {} name update is successful".format(id),
-            "Holiday updated successfully",
-        )
+        holiday = await retrieve_holiday(id)
+        return holiday
     return ErrorResponseModel(
         "An error occurred",
         404,
@@ -195,11 +208,21 @@ async def add_notification_data(event: NotificationSchema = Body(...)):
 
 # Get all notifications
 @router.get("/notifications", response_description="Retreive All Notifications")
-async def get_notification():
+async def get_notification(response:Response):
     events = await retrieve_notifications()
+    response.headers['Content-Range'] = 'notifications 0-20/20'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Range'
     if events:
         return ResponseModel(events, "Notification data retrieved successfully")
     return ResponseModel(events, "Empty list returned")
+
+# Get single event
+@router.get("/notifications/{id}", response_description="Get single Notification")
+async def get_entrance_by_id(id: str,response:Response):
+    event = await retrieve_notification(id)
+    response.headers['Content-Range'] = 'events 0-20/20'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Range'
+    return (event)
 
 # update notification
 @router.put("/notifications/{id}")
@@ -246,12 +269,21 @@ async def add_exam_data(exam: ExamSchema = Body(...)):
 
 # Get all exams
 @router.get("/exams", response_description="Retreive All Exams")
-async def get_exams():
+async def get_exams(response:Response):
+    response.headers['Content-Range'] = '0-5/10'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Range'
     exams = await retrieve_exams()
     if exams:
         return ResponseModel(exams, "Exam data retrieved successfully")
     return ResponseModel(exams, "Empty list returned")
 
+# Get single event
+@router.get("/exams/{id}", response_description="Get single Notification")
+async def get_exams_by_id(id: str,response:Response):
+    event = await retrieve_exam(id)
+    response.headers['Content-Range'] = 'events 0-20/20'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Range'
+    return (event)
 
 # update exam
 @router.put("/exams/{id}")
@@ -285,8 +317,10 @@ async def delete_exam_data(id: str):
 
 # Get exams by department name
 @router.get("/exams/{name}", response_description="Department sorted exams; data retrieved")
-async def get_exam_by_department_data(name):
+async def get_exam_by_department_data(name,response:Response):
     exam = await exam_by_department(name)
+    response.headers['Content-Range'] = '0-5/10'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Range'
     if exam:
         return ResponseModel(exam, "exam data retrieved successfully")
     return ErrorResponseModel("An error occurred.", 404, "Exam doesn't exist.")
@@ -304,11 +338,22 @@ async def add_entrance_data(entrance: EntranceSchema = Body(...)):
 
 # Get all entrances
 @router.get("/entrances", response_description="Retreive All Entrances")
-async def get_entrances():
+async def get_entrances(response:Response):
     entrances = await retrieve_entrances()
+    response.headers['Content-Range'] = '0-5/10'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Range'
     if entrances:
         return ResponseModel(entrances, "Entrances data retrieved successfully")
     return ResponseModel(entrances, "Empty list returned")
+
+# Get single event
+@router.get("/entrances/{id}", response_description="Get single Entrance")
+async def get_entrance_by_id(id: str,response:Response):
+    event = await retrieve_entrance(id)
+    response.headers['Content-Range'] = 'events 0-20/20'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Range'
+    return (event)
+
 
 # update entrance
 @router.put("/entrances/{id}")
@@ -356,7 +401,9 @@ async def add_result_data(result: ResultSchema = Body(...)):
 
 # Get all entrance results
 @router.get("/results/entrance/", response_description="Retreive All Results")
-async def get_result():
+async def get_result(response:Response):
+    response.headers['Content-Range'] = '0-5/10'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Range'
     results = await retrieve_results(type='Entrance')
     if results:
         return ResponseModel(results, "Results data retrieved successfully")
@@ -364,7 +411,9 @@ async def get_result():
 
 # Get all general results
 @router.get("/results/general/", response_description="Retreive All Results")
-async def get_result():
+async def get_result(response:Response):
+    response.headers['Content-Range'] = '0-5/10'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Range'
     results = await retrieve_results(type='General')
     if results:
         return ResponseModel(results, "Results data retrieved successfully")

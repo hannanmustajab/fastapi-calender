@@ -1,19 +1,18 @@
 from datetime import datetime
 from typing import Optional
+from pydantic import BaseModel, EmailStr, Field, HttpUrl
 
-from pydantic import BaseModel, EmailStr, Field,HttpUrl
 
 class EventSchema(BaseModel):
     name: str = Field(...)
     faculty: Optional[str] = Field()
     department: Optional[str] = Field()
-    description: str = Field(...,max_length=300)
-    start_date : datetime = Field(...)
-    end_date : datetime = Field(...)
+    description: str = Field(..., max_length=300)
+    start_date: datetime = Field(...)
+    end_date: datetime = Field(...)
     url: Optional[HttpUrl]
     online: bool = Field(...)
     timestamp: datetime = Field(default=datetime.now())
-
 
     class Config:
         schema_extra = {
@@ -23,22 +22,22 @@ class EventSchema(BaseModel):
                 "description": "Dsknkjskm  hjdsbhjsbh",
                 "start_date": "Date Start",
                 "end_date": "3.0",
-                "url":"Enter URL if any",
-                "online":False          #Default
+                "url": "Enter URL if any",
+                "online": False  # Default
             }
         }
+
 
 class UpdateEventSchema(BaseModel):
     name: str = Field(...)
     faculty: Optional[str] = Field()
     department: Optional[str] = Field()
-    description: str = Field(...,max_length=300)
-    start_date : datetime = Field(...)
-    end_date : datetime = Field(...)
+    description: str = Field(..., max_length=300)
+    start_date: datetime = Field(...)
+    end_date: datetime = Field(...)
     url: Optional[HttpUrl]
     online: bool = Field(...)
     timestamp: datetime = Field(default=datetime.now())
-
 
     class Config:
         schema_extra = {
@@ -48,17 +47,15 @@ class UpdateEventSchema(BaseModel):
                 "description": "Dsknkjskm  hjdsbhjsbh",
                 "start_date": "Date Start",
                 "end_date": "3.0",
-                "url":"Enter URL if any",
-                "online":False          #Default
+                "url": "Enter URL if any",
+                "online": False  # Default
             }
         }
 
-def ResponseModel(data, message):
-    return {
-        "data": [data],
-        "code": 200,
-        "message": message,
-    }
+
+def ResponseModel(data,message):
+    return data
+
 
 
 def ErrorResponseModel(error, code, message):
